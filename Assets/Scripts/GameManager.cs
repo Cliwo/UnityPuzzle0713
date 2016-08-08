@@ -24,6 +24,13 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        checkThunders();
 	}
+
+    private void checkThunders()
+    {
+        GameObject[] thunders = GameObject.FindGameObjectsWithTag("Thunder");
+        if (thunders.Length == 0)
+            Button.isOnGoing = false;
+    }
 }

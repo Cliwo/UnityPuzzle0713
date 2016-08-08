@@ -5,7 +5,7 @@ public class Floor : MonoBehaviour {
 
     GameObject module;
     bool isExpanded;
-    bool hasModule;
+    public bool hasModule;
     // Use this for initialization
     void Start () {
 	    
@@ -51,18 +51,24 @@ public class Floor : MonoBehaviour {
         {
             Debug.Log("module delete");
             module.GetComponent<Module>().deactivateArrow();
+            module.GetComponent<Module>().deactivateInputColor();
             module.SetActive(false);
             hasModule = false;
+        }
+        else if(hasModule && !UIButtonManager.isHammerDown)
+        {
+            openColorSetting(module);
         }
         else if (BoardManager.nextModuleObject != null && !Button.isOnGoing && !hasModule)
         {
             module = Instantiate(BoardManager.nextModuleObject, new Vector3(transform.position.x, transform.position.y, 0F), Quaternion.identity) as GameObject;
             hasModule = true;
+            Module script = module.GetComponent<Module>();
+            script.floor = gameObject; //module과 floor연결.
             if (BoardManager.nextModuleArrow !=null)
-                module.GetComponent<Module>().setActionArrow(BoardManager.nextModuleArrow);
+                script.setActionArrow(BoardManager.nextModuleArrow);
             GetComponent<SpriteRenderer>().sortingOrder = 0;
-
-            openColorSetting();
+            openColorSetting(module);
 
             transform.localScale += new Vector3(-1, -1, 0);
             isExpanded = false;
@@ -70,8 +76,9 @@ public class Floor : MonoBehaviour {
         OnMouseExit();
     }
 
-    public void openColorSetting()
+    public void openColorSetting(GameObject module)
     {
+        UIColorManager.SetNextModule(module);
         GameObject manager = GameObject.FindGameObjectWithTag("UIColorManager");
         UIColorManager script = manager.GetComponent<UIColorManager>();
         script.SetVisible();

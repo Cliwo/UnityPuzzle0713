@@ -13,6 +13,7 @@ public class BoardManager : MonoBehaviour {
     public GameObject destination;
     public GameObject startButton;
     public GameObject allocateButton;
+    public GameObject border;
     
     public static GameObject nextModuleObject;
     public static GameObject nextModuleArrow;
@@ -62,7 +63,8 @@ public class BoardManager : MonoBehaviour {
 
     public void startThunder()
     {
-        Instantiate(thunder, new Vector3(startX_Pos, startY_Pos, 0F), Quaternion.identity);
+        GameObject t = Instantiate(thunder, new Vector3(startX_Pos, startY_Pos, 0F), Quaternion.identity) as GameObject;
+        t.GetComponent<Thunder>().setColor(2);
     }
 
 
@@ -107,27 +109,36 @@ public class BoardManager : MonoBehaviour {
         for (int i = 0; i < destinations.Length; i++)
             Debug.Log(destinations[i].x + " " + destinations[i].y);
         boardHolder = new GameObject("Board").transform;
-        for (int x = 0; x < columns ; x++)
+        for (int x = -1; x <= columns ; x++)
         {
-            for (int y = 0; y < rows; y++)
+            for (int y = -1; y <= rows; y++)
             {
-                for (int i = 0; i < destinations.Length; i++)
-                    if (destinations[i].x == x && destinations[i].y == y)
-                        isNothing=false;
-                if (startX_Pos == x && startY_Pos == y)
-                    isNothing = false;
-                if (isNothing)
+                if(x==-1 || x==columns || y==-1 || y==rows)
                 {
-                    GameObject toInstantiae = floorTiles[0];
-                    //floorTiles[Random.Range(0, floorTiles.Length)];
-                    GameObject instance = Instantiate(toInstantiae, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
-                    SpriteRenderer sp = instance.GetComponent<SpriteRenderer>();
-                    //sp.transform.localScale = new Vector2(2.0f, 1.0f);
-                    //Quaternion이 머야 ?
-                    instance.transform.SetParent(boardHolder);
+                    GameObject inst = Instantiate(border, new Vector3(x, y, 0F), Quaternion.identity) as GameObject;
+                    inst.transform.SetParent(boardHolder);
                 }
                 else
-                    isNothing = true;
+                {
+                    for (int i = 0; i < destinations.Length; i++)
+                        if (destinations[i].x == x && destinations[i].y == y)
+                            isNothing = false;
+                    if (startX_Pos == x && startY_Pos == y)
+                        isNothing = false;
+                    if (isNothing)
+                    {
+                        GameObject toInstantiae = floorTiles[0];
+                        //floorTiles[Random.Range(0, floorTiles.Length)];
+                        GameObject instance = Instantiate(toInstantiae, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
+                        SpriteRenderer sp = instance.GetComponent<SpriteRenderer>();
+                        //sp.transform.localScale = new Vector2(2.0f, 1.0f);
+                        //Quaternion이 머야 ?
+                        instance.transform.SetParent(boardHolder);
+                    }
+                    else
+                        isNothing = true;
+                }
+                
             }
         }
         Instantiate(startButton, new Vector3(2, 12, 0F), Quaternion.identity);

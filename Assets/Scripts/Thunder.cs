@@ -3,12 +3,15 @@ using System.Collections;
 
 public class Thunder : MonoBehaviour {
 
+    public Sprite[] sprites = new Sprite[5];
+
     public float moveTime = 0.1f;
     private float inverseMoveTime;
 
     public enum ThunderDirection { LEFT, RIGHT, UP, DOWN};
     private ThunderDirection currentDirection = ThunderDirection.RIGHT;
 
+    public Module.Color color;
     private Rigidbody2D rb2D;
 
     // Use this for initialization
@@ -17,6 +20,18 @@ public class Thunder : MonoBehaviour {
         rb2D = GetComponent<Rigidbody2D>();
         inverseMoveTime = 1f / moveTime;
         //currentDirection = RIGHT; //default setting
+
+        //color = Module.Color.YELLOW;
+    }
+
+    public void setColor(int colorValue)
+    {
+        color = Module.parseColor(colorValue);
+        gameObject.GetComponent<SpriteRenderer>().sprite = sprites[colorValue];
+    }
+    public Module.Color getColor()
+    {
+        return color;
     }
    
     public void setDirection(ThunderDirection direction)
@@ -64,10 +79,11 @@ public class Thunder : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Module" || other.tag == "Destination")
+        if (other.tag == "Module" || other.tag == "Destination" || other.tag=="Border")
         {
             this.gameObject.SetActive(false);
         }
+        
     }
 
 }

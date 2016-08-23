@@ -52,7 +52,7 @@ public class Floor : MonoBehaviour {
             Debug.Log("module delete");
             module.GetComponent<Module>().deactivateArrow();
             module.GetComponent<Module>().deactivateInputColor();
-            module.SetActive(false);
+            Destroy(module);
             hasModule = false;
         }
         else if(hasModule && !UIButtonManager.isHammerDown)

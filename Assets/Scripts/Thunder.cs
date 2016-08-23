@@ -81,7 +81,7 @@ public class Thunder : MonoBehaviour {
     {
         if (other.tag == "Module" || other.tag == "Destination" || other.tag=="Border")
         {
-            this.gameObject.SetActive(false);
+            Destroy(gameObject);
         }
         
     }

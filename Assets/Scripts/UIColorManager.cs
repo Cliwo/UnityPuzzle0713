@@ -4,20 +4,36 @@ using System.Collections;
 public class UIColorManager : MonoBehaviour {
 
     static CanvasRenderer canvas;
-
+    
     static GameObject moduleToDye;
 
-	// Use this for initialization
-	void Start () {
-        canvas = GetComponent<CanvasRenderer>();
+    static UnityEngine.UI.Text outputText;
+    static UnityEngine.UI.Text inputText;
+
+    // Use this for initialization
+    void Start () {
+        canvas = GameObject.FindGameObjectWithTag("UIColorManager").GetComponent<CanvasRenderer>();
         if (canvas != null)
         {
             canvas.SetAlpha(0);
             CanvasRenderer[] childeren = canvas.GetComponentsInChildren<CanvasRenderer>();
             for (int i = 0; i < childeren.Length; i++)
                 childeren[i].SetAlpha(0);
+
+            outputText = GameObject.FindGameObjectWithTag("OutputText").GetComponent<UnityEngine.UI.Text>();
+            inputText = GameObject.FindGameObjectWithTag("InputText").GetComponent<UnityEngine.UI.Text>();
         }
 	}
+
+    public void loadLanguageSetting(Assets.Scripts.LanguageBaseText obj)
+    {
+        if(outputText == null)
+            outputText = GameObject.FindGameObjectWithTag("OutputText").GetComponent<UnityEngine.UI.Text>();
+        if(inputText==null)
+            inputText = GameObject.FindGameObjectWithTag("InputText").GetComponent<UnityEngine.UI.Text>();
+        outputText.GetComponent<UnityEngine.UI.Text>().text = obj.outputText;
+        inputText.GetComponent<UnityEngine.UI.Text>().text = obj.inputText;
+    }
 
     public void onRedDown()
     {
@@ -84,11 +100,19 @@ public class UIColorManager : MonoBehaviour {
     public void SetColor(int color)
     {
         if (moduleToDye != null)
-            moduleToDye.GetComponent<Module>().setModuleColor(color); 
+        {
+            moduleToDye.GetComponent<Module>().setModuleColor(color);
+            GameObject.FindGameObjectWithTag("CurrentModuleTable").GetComponent<CurrentModuleTable>().onNextModuleObjectOutputColorChanged(color);
+            //CurrentModuleTable.onNextModuleObjectChanged();
+        }
     }
     public void SetInputColor(int color)
     {
         if (moduleToDye != null)
-            moduleToDye.GetComponent<Module>().setInputColor(color); 
+        {
+            moduleToDye.GetComponent<Module>().setInputColor(color);
+            GameObject.FindGameObjectWithTag("CurrentModuleTable").GetComponent<CurrentModuleTable>().onNextModuleObjectInputColorChanged(color);
+            //CurrentModuleTable.onNextModuleObjectChanged();
+        }
     }
 }

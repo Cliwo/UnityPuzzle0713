@@ -16,6 +16,7 @@ public class UIButtonManager : MonoBehaviour {
         {
             BoardManager.nextModuleObject = module;
             BoardManager.nextModuleArrow = UpAndDownArrow;
+            InitCurrentModuleTableColor();
         }       
     }
 
@@ -26,6 +27,7 @@ public class UIButtonManager : MonoBehaviour {
         {
             BoardManager.nextModuleObject = module;
             BoardManager.nextModuleArrow = CrossArrow;
+            InitCurrentModuleTableColor();
         }     
     }
 
@@ -36,6 +38,7 @@ public class UIButtonManager : MonoBehaviour {
         {
             BoardManager.nextModuleObject = module;
             BoardManager.nextModuleArrow = null;
+            InitCurrentModuleTableColor();
         }
     }
     public void OnHammerDown()
@@ -43,6 +46,12 @@ public class UIButtonManager : MonoBehaviour {
         isHammerDown = true;
         BoardManager.nextModuleObject = null;
         BoardManager.nextModuleArrow = null;
+        InitCurrentModuleTableColor();
     }
 
+    public void InitCurrentModuleTableColor()
+    {
+        GameObject.FindGameObjectWithTag("CurrentModuleTable").GetComponent<CurrentModuleTable>().onNextModuleObjectOutputColorChanged(0);
+        GameObject.FindGameObjectWithTag("CurrentModuleTable").GetComponent<CurrentModuleTable>().onNextModuleObjectInputColorChanged(0);
+    }
 }

@@ -56,6 +56,13 @@ public class Button : MonoBehaviour {
                     thunders[i].SetActive(false);
             }
         }
+        else if (tag == "ClearButton")
+        {
+            Debug.Log("Clear");
+            GameObject[] modules = GameObject.FindGameObjectsWithTag("Module");
+            for (int i = 0; i < modules.Length; i++)
+                modules[i].GetComponent<Module>().deactivateModule();
+        }
     }
 
    

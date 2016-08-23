@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Assets.Scripts;
+using Newtonsoft.Json;
 
 public class BoardManager : MonoBehaviour {
     private Transform boardHolder;
     public GameObject[] floorTiles;
     public GameObject[] arrows;
 
+    private Transform levelHolder;
     public GameObject startingPoint;
     public GameObject module;
     public GameObject thunder;
     public GameObject destination;
     public GameObject startButton;
     public GameObject allocateButton;
+    public GameObject clearButton;
     public GameObject border;
     
     public static GameObject nextModuleObject;
@@ -30,6 +33,7 @@ public class BoardManager : MonoBehaviour {
 
     public GameObject GetModuleKind(ModuleKind mk)
     {
+       
         switch(mk)
         {
             case ModuleKind.UpAndDownArrow:
@@ -39,16 +43,32 @@ public class BoardManager : MonoBehaviour {
         }
         return null;
     }
-    
+    public void DestroyScene()
+    {
+        Debug.Log("Destroy Scene Called");
+        GameObject[] modules = GameObject.FindGameObjectsWithTag("Module");
+        for (int i = 0; i < modules.Length; i++)
+            modules[i].GetComponent<Module>().deactivateModule();
+        GameObject[] thunders = GameObject.FindGameObjectsWithTag("Thunder");
+        for (int i = 0; i < thunders.Length; i++)
+            Destroy(thunders[i].gameObject);
+        Destroy(boardHolder.gameObject);
+    }
     public void SetUpScene(LevelInformation level)
     {
+        levelHolder = new GameObject("LevelObjects").transform;
+
         startX_Pos = level.startPoint.x;
         startY_Pos =  level.startPoint.y;
-        Instantiate(startingPoint, new Vector3(startX_Pos, startY_Pos, 0F), Quaternion.identity);
+        GameObject inst = Instantiate(startingPoint, new Vector3(startX_Pos, startY_Pos, 0F), Quaternion.identity) as GameObject;
+        inst.transform.SetParent(levelHolder);
         Debug.Log(startX_Pos + " " + startY_Pos);
         for (int i = 0; i < level.destinations.Length; i++)
         {
-            Instantiate(destination, new Vector3(level.destinations[i].x, level.destinations[i].y, 0F), Quaternion.identity);  
+            GameObject temp = Instantiate(destination, new Vector3(level.destinations[i].x, level.destinations[i].y, 0F), Quaternion.identity)as GameObject;
+            temp.transform.SetParent(levelHolder); 
+            Destination dest = temp.GetComponent<Destination>();
+            dest.setColor(level.destinationColors[i]);
         }
         BoardSetup(level.destinations);
         if (level.modulePositions != null)
@@ -56,51 +76,41 @@ public class BoardManager : MonoBehaviour {
             for (int i = 0; i < level.modulePositions.Length; i++)
             {
                 GameObject md = Instantiate(module, new Vector3(level.modulePositions[i].x, level.modulePositions[i].y, 0F), Quaternion.identity) as GameObject;
+                md.transform.SetParent(levelHolder);
                 md.GetComponent<Module>().setActionArrow(GetModuleKind(level.moduleKind[i]));
             }
         }
+        levelHolder.transform.SetParent(boardHolder);
     }
 
     public void startThunder()
     {
         GameObject t = Instantiate(thunder, new Vector3(startX_Pos, startY_Pos, 0F), Quaternion.identity) as GameObject;
         t.GetComponent<Thunder>().setColor(2);
+        //처음 번개는 노란색으로 시작.
     }
-
 
     public void SetUpScene(int level)
     {
-        switch(level)
-        {
-            case 1:
-                LevelInformation level1 = new LevelInformation();
-                level1.startPoint = new Vector2(columns / 3 , rows / 2);
-                level1.destinations = new Vector2[1];
-                level1.destinations[0] = new Vector2(columns/3 * 2, rows / 2);
-                SetUpScene(level1);
-                break;
+        Debug.Log("SetUp Scene Called" + ", level : " + level);
+        string level_name = "level" + level;
 
-            case 2:
-                LevelInformation level2 = new LevelInformation();
-                level2.startPoint = new Vector2(columns / 3, rows / 2);
-                level2.destinations = new Vector2[2];
-                level2.destinations[1] = new Vector2(columns / 3 * 2, rows / 2 +3);
-                level2.destinations[0] = new Vector2(columns / 3 * 2, rows / 2 -3);
-                SetUpScene(level2);
-                break;
+        //http://answers.unity3d.com/questions/1171740/android-devices-does-not-read-json-file-but-unity.html
+        TextAsset file = Resources.Load("levels/"+level_name) as TextAsset;
+        string content = file.ToString();
+        Debug.Log(content);
+        // Then put your convert string -> JSON object after this
+        // -> I found this cord http://answers.unity3d.com/questions/1171740/android-devices-does-not-read-json-file-but-unity.html
+        
+        LevelInformation levelInfor = JsonConvert.DeserializeObject<LevelInformation>(content);
 
-            case 3:
-                LevelInformation level3 = new LevelInformation();
-                level3.startPoint = new Vector2(columns / 3, rows / 2);
-                level3.destinations = new Vector2[3];
-                level3.destinations[2] = new Vector2(19, 5);
-                level3.destinations[1] = new Vector2(columns / 3 * 2, rows / 2 + 3);
-                level3.destinations[0] = new Vector2(columns / 3 * 2, rows / 2 - 3); 
-                SetUpScene(level3);
-                break;
+        SetUpScene(levelInfor);
+    }
 
-        }
-       
+    public void BoardSetup(Coord[] destinations)
+    {
+        Vector2[] v_destinations = new Vector2[destinations.Length];
+        BoardSetup(v_destinations);
     }
 
     public void BoardSetup(Vector2[] destinations)
@@ -143,5 +153,72 @@ public class BoardManager : MonoBehaviour {
         }
         Instantiate(startButton, new Vector3(2, 12, 0F), Quaternion.identity);
         Instantiate(allocateButton, new Vector3(8, 12, 0F), Quaternion.identity);
+        Instantiate(clearButton, new Vector3(14, 12, 0f), Quaternion.identity);
     }
+
+    /*
+     *
+     *
+    public void SetUpSceneWithTestCord(int level)
+    {
+       
+        TestCoord temp2 = new TestCoord();
+        string v = JsonConvert.SerializeObject(temp2);
+        Debug.Log(v); 
+     
+        switch (level)
+        {
+            case 1:
+                LevelInformation level1 = new LevelInformation();
+    level1.startPoint = new Coord(columns / 3 , rows / 2);
+    level1.destinations = new Coord[1];
+                level1.destinations[0] = new Coord(columns/3 * 2, rows / 2);
+    level1.destinationColors = new Module.Color[1];
+                level1.destinationColors[0] = Module.Color.YELLOW;
+                SetUpScene(level1);
+    string v = JsonConvert.SerializeObject(level1);
+    Debug.Log(v);
+                break;
+
+            case 2:
+                LevelInformation level2 = new LevelInformation();
+    level2.startPoint = new Coord(columns / 3, rows / 2);
+    level2.destinations = new Coord[2];
+                level2.destinations[1] = new Coord(columns / 3 * 2, rows / 2 +3);
+    level2.destinations[0] = new Coord(columns / 3 * 2, rows / 2 -3);
+    level2.destinationColors = new Module.Color[2];
+                level2.destinationColors[0] = Module.Color.RED;
+                level2.destinationColors[1] = Module.Color.RED;
+                SetUpScene(level2);
+    string v2 = JsonConvert.SerializeObject(level2);
+    Debug.Log(v2);
+                break;
+
+            case 3:
+                LevelInformation level3 = new LevelInformation();
+    level3.startPoint = new Coord(columns / 3, rows / 2);
+    level3.destinations = new Coord[3];
+                level3.destinations[2] = new Coord(19, 5);
+    level3.destinations[1] = new Coord(columns / 3 * 2, rows / 2 + 3);
+    level3.destinations[0] = new Coord(columns / 3 * 2, rows / 2 - 3);
+    level3.destinationColors = new Module.Color[3];
+                level3.destinationColors[0] = Module.Color.BLUE;
+                level3.destinationColors[1] = Module.Color.BLUE;
+                level3.destinationColors[2] = Module.Color.BLUE;
+                string v3 = JsonConvert.SerializeObject(level3);
+    Debug.Log(v3);
+                //string json = JsonConvert.SerializeObject(level3);
+                //Debug.Log(level3);
+
+                SetUpScene(level3);
+                break;
+
+        }
+       
+    }
+
+
+     *
+     * 
+     */
 }

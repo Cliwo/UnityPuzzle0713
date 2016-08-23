@@ -9,11 +9,69 @@ namespace Assets.Scripts
     public enum ModuleKind { UpAndDownArrow, CrossArrow };
     public class LevelInformation
     {
-        public Vector2 startPoint;
-        public Vector2[] destinations;
-        public Vector2[] modulePositions;
+        public Coord startPoint;     
+        public Coord[] destinations;        
+        public Module.Color[] destinationColors;        
+        public Coord[] modulePositions;       
         public ModuleKind[] moduleKind;
-
-        
+        public bool isLastName;
+        /*
+        public Coord StartPoint
+        {
+            get
+            {
+                return startPoint;
+            }
+            set
+            {
+                startPoint = value;
+            }
+        }
+        public Coord[] Destinations
+        {
+            get
+            {
+                return destinations;
+            }
+            set
+            {
+                destinations = value;
+            }
+        }
+        public Module.Color[] DestinationColors
+        {
+            get
+            {
+                return destinationColors;
+            }
+            set
+            {
+                destinationColors = value;
+            }
+        }
+        //destinations and destinationColors should have same Length;
+        public Coord[] ModulePositions
+        {
+            get
+            {
+                return modulePositions;
+            }
+            set
+            {
+                modulePositions = value;
+            }
+        }
+        public ModuleKind[] ModuleKind
+        {
+            get
+            {
+                return moduleKind;
+            }
+            set
+            {
+                moduleKind = value;
+            }
+        }
+        */
     }
 }

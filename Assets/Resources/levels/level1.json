@@ -1,0 +1,16 @@
+﻿{
+    "startPoint": {
+      "x": 8,
+      "y": 5
+    },
+    "destinations": [
+      {
+        "x": 16,
+        "y": 5
+      }
+    ],
+    "destinationColors": [ 2 ],
+    "modulePositions": null,
+  "moduleKind": null,
+      "isLastLevel": false
+}

@@ -2,6 +2,7 @@
 using System.Collections;
 using Assets.Scripts;
 
+
 public class Module : MonoBehaviour {
 
     public GameObject thunder;
@@ -9,7 +10,7 @@ public class Module : MonoBehaviour {
     [HideInInspector] public GameObject actionArrow; //애로우를 만들 붕어빵 틀
     [HideInInspector] public GameObject floor;
     GameObject arrowInstance; //애로우 실체
-    GameObject inputColorRendererInstance; //inputColor 실체
+    public GameObject inputColorRendererInstance; //inputColor 실체
 
     private Vector3 offset;
     private GameObject actionIndicator;
@@ -35,11 +36,13 @@ public class Module : MonoBehaviour {
         inputColor = Color.BLUE;
         if (actionArrow != null)
         {
-            arrowInstance = Instantiate(actionArrow, new Vector3(transform.position.x, transform.position.y, -10F), Quaternion.identity) as GameObject;
+            arrowInstance = Instantiate(actionArrow, new Vector3(transform.position.x, transform.position.y, -5F), Quaternion.identity) as GameObject;
             actionIndicator = arrowInstance;
             script = arrowInstance.GetComponent<ActionIndicator>();
         }
-        inputColorRendererInstance = Instantiate(inputColorRenderer, new Vector3(transform.position.x, transform.position.y, 0F), Quaternion.identity)as GameObject;
+        inputColorRendererInstance = Instantiate(inputColorRenderer, new Vector3(transform.position.x, transform.position.y, -3F), Quaternion.identity)as GameObject;
+
+    
     }
 	
 	// Update is called once per frame
@@ -106,17 +109,25 @@ public class Module : MonoBehaviour {
     {
         this.actionArrow = arrow;
     }
+    public void deactivateModule()
+    {
+        deactivateArrow();
+        deactivateInputColor();
+        Destroy(gameObject);
+        Floor script = floor.GetComponent<Floor>();
+        script.hasModule = false;
+    }
     public void deactivateArrow()
     {
-        if(this.arrowInstance != null)
-            this.arrowInstance.SetActive(false);
+        if (this.arrowInstance != null)
+            Destroy(this.arrowInstance);
         if (this.actionArrow != null)
             this.actionArrow = null;
     }
     public void deactivateInputColor()
     {
         if (inputColorRendererInstance != null)
-            inputColorRendererInstance.SetActive(false);
+            Destroy(inputColorRendererInstance);
     }
 
     private void checkColor(Thunder thunder)
@@ -217,11 +228,7 @@ public class Module : MonoBehaviour {
         if (UIButtonManager.isHammerDown)
         {
             Debug.Log("module delete");
-            deactivateArrow();
-            deactivateInputColor();
-            Floor script = floor.GetComponent<Floor>();
-            script.hasModule = false;
-            gameObject.SetActive(false);
+            deactivateModule();
         }
     }
 

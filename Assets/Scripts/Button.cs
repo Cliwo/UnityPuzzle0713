@@ -43,6 +43,10 @@ public class Button : MonoBehaviour {
                 Debug.Log("Start");
                 isOnGoing = true;
                 manager.GetComponent<BoardManager>().startThunder();
+                GameObject[] destinations = GameObject.FindGameObjectsWithTag("Destination");
+                for (int i = 0; i < destinations.Length; i++)
+                    destinations[i].GetComponent<Destination>().isCharged = false;
+                //after all thunders are disappeared, all Destination's isCharged should be false
             }
         }
         else if (tag == "AllocateButton")
@@ -54,6 +58,7 @@ public class Button : MonoBehaviour {
                 GameObject[] thunders = GameObject.FindGameObjectsWithTag("Thunder");
                 for (int i = 0; i < thunders.Length; i++)
                     thunders[i].SetActive(false);
+                
             }
         }
         else if (tag == "ClearButton")

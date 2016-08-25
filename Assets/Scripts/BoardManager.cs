@@ -21,6 +21,8 @@ public class BoardManager : MonoBehaviour {
     public static GameObject nextModuleObject;
     public static GameObject nextModuleArrow;
 
+    public static int FINAL_LEVEL = 3;
+    public static bool isStartPressedInThisLevel = false;
     public static int columns = 25; //x좌표
     public static int rows = 10; //y좌표
 
@@ -32,8 +34,7 @@ public class BoardManager : MonoBehaviour {
     
 
     public GameObject GetModuleKind(ModuleKind mk)
-    {
-       
+    { 
         switch(mk)
         {
             case ModuleKind.UpAndDownArrow:
@@ -56,6 +57,7 @@ public class BoardManager : MonoBehaviour {
     }
     public void SetUpScene(LevelInformation level)
     {
+        isStartPressedInThisLevel = false;
         levelHolder = new GameObject("LevelObjects").transform;
 
         startX_Pos = level.startPoint.x;
@@ -85,6 +87,7 @@ public class BoardManager : MonoBehaviour {
 
     public void startThunder()
     {
+        isStartPressedInThisLevel = true;
         GameObject t = Instantiate(thunder, new Vector3(startX_Pos, startY_Pos, 0F), Quaternion.identity) as GameObject;
         t.GetComponent<Thunder>().setColor(2);
         //처음 번개는 노란색으로 시작.
@@ -92,6 +95,12 @@ public class BoardManager : MonoBehaviour {
 
     public void SetUpScene(int level)
     {
+        if(level> FINAL_LEVEL)
+        {
+            Debug.Log("Game Complete");
+            return; 
+        }
+
         Debug.Log("SetUp Scene Called" + ", level : " + level);
         string level_name = "level" + level;
 
@@ -110,6 +119,11 @@ public class BoardManager : MonoBehaviour {
     public void BoardSetup(Coord[] destinations)
     {
         Vector2[] v_destinations = new Vector2[destinations.Length];
+        for(int i=0;i<v_destinations.Length;i++)
+        {
+            v_destinations[i].x = destinations[i].x;
+            v_destinations[i].y = destinations[i].y;
+        }
         BoardSetup(v_destinations);
     }
 
@@ -148,9 +162,9 @@ public class BoardManager : MonoBehaviour {
                     else
                         isNothing = true;
                 }
-                
             }
         }
+  
         Instantiate(startButton, new Vector3(2, 12, 0F), Quaternion.identity);
         Instantiate(allocateButton, new Vector3(8, 12, 0F), Quaternion.identity);
         Instantiate(clearButton, new Vector3(14, 12, 0f), Quaternion.identity);

@@ -30,7 +30,6 @@ public class CurrentModuleTable : MonoBehaviour {
         for (int i = 0; i < 2; i++)
         {
             currentModuleColorOutput[i].GetComponent<Image>().sprite = outputSprites[color];
-            
         }
     }
     public void onNextModuleObjectInputColorChanged(int color)
@@ -40,9 +39,13 @@ public class CurrentModuleTable : MonoBehaviour {
             color = 4;
         for (int i = 0; i < 2; i++)
         {
-
             currentModuleColorInput[i].GetComponent<Image>().sprite = inputSprites[color];
         }
     }
 
+    public void setCurrentModule(int outputColor, int inputColor)
+    {
+        onNextModuleObjectOutputColorChanged(outputColor);
+        onNextModuleObjectInputColorChanged(inputColor);
+    }
 }

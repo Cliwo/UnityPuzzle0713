@@ -4,7 +4,8 @@ using System.Collections;
 public class UIColorManager : MonoBehaviour {
 
     static CanvasRenderer canvas;
-    
+    static CanvasRenderer[] colorCanvas;
+
     static GameObject moduleToDye;
 
     static UnityEngine.UI.Text outputText;
@@ -12,7 +13,13 @@ public class UIColorManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        canvas = GameObject.FindGameObjectWithTag("UIColorManager").GetComponent<CanvasRenderer>();
+        if (GameManager.instance.state == GameManager.CanvasState.Game)
+        {
+            canvas = GameObject.FindGameObjectWithTag("UIColorManager").GetComponent<CanvasRenderer>();
+            colorCanvas = new CanvasRenderer[2];
+            colorCanvas[0] = GameObject.FindGameObjectWithTag("OutputColorCanvas").GetComponent<CanvasRenderer>();
+            colorCanvas[1] = GameObject.FindGameObjectWithTag("InputColorCanvas").GetComponent<CanvasRenderer>();
+        }
         if (canvas != null)
         {
             canvas.SetAlpha(0);
@@ -24,6 +31,10 @@ public class UIColorManager : MonoBehaviour {
             inputText = GameObject.FindGameObjectWithTag("InputText").GetComponent<UnityEngine.UI.Text>();
         }
 	}
+    public static void setCanvas()
+    {
+        canvas = GameObject.FindGameObjectWithTag("UIColorManager").GetComponent<CanvasRenderer>();
+    }
 
     public void loadLanguageSetting(Assets.Scripts.LanguageBaseText obj)
     {
@@ -80,14 +91,35 @@ public class UIColorManager : MonoBehaviour {
     public static void SetNextModule(GameObject obj)
     {
         moduleToDye = obj;
+        Module moduleScript = moduleToDye.GetComponent<Module>();
+        GameObject.FindGameObjectWithTag("CurrentModuleTable").GetComponent<CurrentModuleTable>().setCurrentModule(Module.parseColor(moduleScript.outputColor), Module.parseColor(moduleScript.inputColor));
     }
 
     public void SetVisible()
     {
         canvas.SetAlpha(1);
-        CanvasRenderer[] childeren = canvas.GetComponentsInChildren<CanvasRenderer>();
+        colorCanvas[0].SetAlpha(1); //colorCanvas[0] == OutputColor
+        CanvasRenderer[] childeren = colorCanvas[0].GetComponentsInChildren<CanvasRenderer>();
         for (int i = 0; i < childeren.Length; i++)
             childeren[i].SetAlpha(1);
+        /*CanvasRenderer[] childeren = canvas.GetComponentsInChildren<CanvasRenderer>();
+        for (int i = 0; i < childeren.Length; i++)
+            childeren[i].SetAlpha(1);
+            */
+    }
+
+    public void OutputToInput()
+    {
+        Debug.Log("output to input");
+        colorCanvas[0].SetAlpha(0); //colorCanvas[1] == OutputColor
+        CanvasRenderer[] childeren_out = colorCanvas[0].GetComponentsInChildren<CanvasRenderer>();
+        for (int i = 0; i < childeren_out.Length; i++)
+            childeren_out[i].SetAlpha(0);
+
+        colorCanvas[1].SetAlpha(1); //colorCanvas[2] == InputColor
+        CanvasRenderer[] childeren_in = colorCanvas[1].GetComponentsInChildren<CanvasRenderer>();
+        for (int i = 0; i < childeren_in.Length; i++)
+            childeren_in[i].SetAlpha(1);
     }
 
     public void SetInvisible()
@@ -104,6 +136,7 @@ public class UIColorManager : MonoBehaviour {
             moduleToDye.GetComponent<Module>().setModuleColor(color);
             GameObject.FindGameObjectWithTag("CurrentModuleTable").GetComponent<CurrentModuleTable>().onNextModuleObjectOutputColorChanged(color);
             //CurrentModuleTable.onNextModuleObjectChanged();
+            OutputToInput();
         }
     }
     public void SetInputColor(int color)
@@ -113,6 +146,7 @@ public class UIColorManager : MonoBehaviour {
             moduleToDye.GetComponent<Module>().setInputColor(color);
             GameObject.FindGameObjectWithTag("CurrentModuleTable").GetComponent<CurrentModuleTable>().onNextModuleObjectInputColorChanged(color);
             //CurrentModuleTable.onNextModuleObjectChanged();
+            SetInvisible();
         }
     }
 }

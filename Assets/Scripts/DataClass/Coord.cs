@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Assets.Scripts
 {
+    //class for Json (to Save Object to Json or vice versa)
     public class Coord
     {
         

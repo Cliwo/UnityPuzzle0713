@@ -3,6 +3,8 @@ using System.Collections;
 
 using Assets.Scripts; // actionArrow 를 위해서
 
+//Plese read the comment in the 'ActionArrow' Class.
+
 public class ActionIndicator : MonoBehaviour {
 
     private ActionArrow ct;

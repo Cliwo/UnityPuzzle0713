@@ -12,6 +12,9 @@ namespace Assets.Scripts
         public Coord startPoint;     
         public Coord[] destinations;        
         public Module.Color[] destinationColors;        
+        //module Positions and moduleKind are not currently used.
+        //because there is no fixed Module in every level.
+        //If you have to make fixed Module, You can use these.
         public Coord[] modulePositions;       
         public ModuleKind[] moduleKind;
         public bool isLastName;

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Assets.Scripts
 {
+    //class for Json
     public class LanguageBaseText
     {
         public string outputText;

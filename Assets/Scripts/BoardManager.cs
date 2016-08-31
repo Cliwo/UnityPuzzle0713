@@ -53,6 +53,7 @@ public class BoardManager : MonoBehaviour {
         GameObject[] thunders = GameObject.FindGameObjectsWithTag("Thunder");
         for (int i = 0; i < thunders.Length; i++)
             Destroy(thunders[i].gameObject);
+        if(boardHolder != null && boardHolder.gameObject != null)
         Destroy(boardHolder.gameObject);
     }
     public void SetUpScene(LevelInformation level)
